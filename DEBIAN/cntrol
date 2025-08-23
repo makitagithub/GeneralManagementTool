@@ -1,7 +1,8 @@
-Package: general-management-tool
-Version: 1.0
-Section: utils
+Package: generalmanagementtool
+Version: 1.0.0
+Section: base
 Priority: optional
-Architecture: all
-Maintainer: Your Name <you@example.com>
-Description: 業務用GUI管理ツール（教育用ダミー）
+Architecture: amd64
+Maintainer: Example Corp <info@example.com>
+Description: General Management Tool (dummy package for update testing)
+ This is a dummy package used to test software updates.
