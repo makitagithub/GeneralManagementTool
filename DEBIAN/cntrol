@@ -1,0 +1,7 @@
+Package: general-management-tool
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: all
+Maintainer: Your Name <you@example.com>
+Description: 業務用GUI管理ツール（教育用ダミー）

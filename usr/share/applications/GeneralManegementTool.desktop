@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=General Management Tool
+Comment=ネットワーク・ログ・設定を管理するGUIツール
+Exec=python3 /usr/local/bin/main.py
+Icon=GeneralManagementTool
+Terminal=false
+Type=Application
+Categories=Utility;
