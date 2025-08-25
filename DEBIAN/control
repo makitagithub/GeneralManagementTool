@@ -4,5 +4,6 @@ Section: base
 Priority: optional
 Architecture: amd64
 Maintainer: Example Corp <info@example.com>
+Depend: python3, python3-tk, python3-psutil
 Description: General Management Tool (dummy package for update testing)
  This is a dummy package used to test software updates.
