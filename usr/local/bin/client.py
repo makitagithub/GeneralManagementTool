@@ -1,78 +1,56 @@
-import asyncio
-import websockets
-import json
+import requests
 import PySimpleGUI as sg
 import threading
+import time
 
-# GUIのイベントキューにメッセージを送信するためのキー
-MESSAGE_KEY = '-MESSAGE-'
+def check_for_updates_polling(window):
+    """アップデートを定期的に確認するポーリングスレッド"""
+    update_check_interval = 30  # 確認間隔を30秒に設定
+    update_server_url = "http://localhost:5000/check_for_updates"
 
-def run_websocket_client(window):
-    """GUIの別スレッドでWebSocketクライアントを実行します。"""
-    async def connect():
-        uri = "ws://localhost:8765"
+    while True:
         try:
-            # WebSocketサーバーに接続
-            async with websockets.connect(uri) as websocket:
-                print("サーバーに接続しました。通知を待機中...")
-                window.write_event_value(MESSAGE_KEY, "サーバーに接続しました。通知を待機中...")
+            response = requests.get(update_server_url)
+            update_data = response.json()
+            
+            if update_data.get("has_update"):
+                version = update_data.get("version")
+                download_url = update_data.get("download_url")
                 
-                # サーバーからのメッセージを待機
-                async for message_str in websocket:
-                    message_data = json.loads(message_str)
-                    print(f"サーバーからメッセージを受信: {message_data}")
-                    window.write_event_value(MESSAGE_KEY, message_data)
+                message = f"新しいバージョンが見つかりました: {version}\nダウンロード: {download_url}"
+                window.write_event_value('-UPDATE_FOUND-', message)
+                # アップデートが見つかったらポーリングを停止することもできます
+                break 
+            
+            print("アップデートはありませんでした。")
 
-        except ConnectionRefusedError:
-            error_msg = "サーバーへの接続に失敗しました。サーバーが起動しているか確認してください。"
-            print(error_msg)
-            window.write_event_value(MESSAGE_KEY, {"type": "error", "body": error_msg})
-        except Exception as e:
-            error_msg = f"接続中にエラーが発生しました: {e}"
-            print(error_msg)
-            window.write_event_value(MESSAGE_KEY, {"type": "error", "body": error_msg})
+        except requests.exceptions.RequestException as e:
+            print(f"アップデートサーバーへの接続に失敗しました: {e}")
+        
+        # 次の確認まで待機
+        time.sleep(update_check_interval)
 
-    # asyncioのイベントループをスレッド内で実行
-    asyncio.run(connect())
-
-# GUIのレイアウト
+# GUIのレイアウトとイベントループは、WebSocketの時とほぼ同じ
 layout = [
     [sg.Text("GeneralManagementTool", font=("Helvetica", 20))],
-    [sg.Text("サーバーからの通知を待機中...", key='-STATUS-')],
-    [sg.HorizontalSeparator()],
-    [sg.Output(size=(60, 10), key='-OUTPUT-')],
+    [sg.Output(size=(60, 10))],
     [sg.Button("終了")]
 ]
 
-# ウィンドウの作成
 window = sg.Window("GeneralManagementTool", layout, finalize=True)
 
-# WebSocketクライアントを別スレッドで起動
-thread = threading.Thread(target=run_websocket_client, args=(window,), daemon=True)
-thread.start()
+# アップデート確認スレッドを起動
+update_thread = threading.Thread(target=check_for_updates_polling, args=(window,), daemon=True)
+update_thread.start()
 
 # GUIのイベントループ
 while True:
-    event, values = window.read(timeout=100)
+    event, values = window.read()
     if event == sg.WIN_CLOSED or event == "終了":
         break
     
-    # WebSocketスレッドからのメッセージを受信
-    if event == MESSAGE_KEY:
-        message = values[MESSAGE_KEY]
-        if isinstance(message, str):
-            window['-STATUS-'].update(message)
-            window['-OUTPUT-'].print(message)
-        elif isinstance(message, dict) and message.get("type") == "notification":
-            title = message.get("title", "通知")
-            body = message.get("body", "")
-            sg.popup_ok(body, title=title)
-            window['-OUTPUT-'].print(f"ポップアップ通知: {body}")
-        elif isinstance(message, dict) and message.get("type") == "error":
-            error_body = message.get("body", "不明なエラー")
-            sg.popup_error(error_body, title="エラー")
-            window['-OUTPUT-'].print(f"エラー: {error_body}")
-            window['-STATUS-'].update("接続エラーが発生しました。")
-            break
+    # ポーリングスレッドからのアップデート通知を受信
+    if event == '-UPDATE_FOUND-':
+        sg.popup_ok(values['-UPDATE_FOUND-'], title="アップデート通知")
 
 window.close()
