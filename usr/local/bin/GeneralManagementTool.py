@@ -3,56 +3,47 @@
 from pathlib import Path
 import tkinter as tk
 from tkinter import ttk, messagebox
-import subprocess
-import os
 import resource_monitor 
 import command_log
 import endpoint_log
 import network_status
 import setting
+import client as update_client # client.pyをインポート
 
 ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
 
 def notify_update():
-    """ベルマークボタンを押したときにclient.pyを起動する"""
-    try:
-        # client.pyのパスを指定（このスクリプトと同じディレクトリにあると仮定）
-        client_script_path = os.path.join(os.path.dirname(__file__), "client.py")
-        
-        # subprocess.Popenを使ってclient.pyを新しいプロセスとして起動
-        # これによりGUIがフリーズせずに済む
-        subprocess.Popen(["python3", client_script_path])
-        
-        # ユーザーに通知
-        messagebox.showinfo("通知", "アップデート確認ツールを起動しました。")
-    except FileNotFoundError:
-        messagebox.showerror("エラー", "client.pyが見つかりません。パスを確認してください。")
-    except Exception as e:
-        messagebox.showerror("エラー", f"ツールの起動中にエラーが発生しました: {e}")
+    """ベルマークボタンを押したときにアップデートを確認し、通知を表示する"""
+    # client.pyから関数を呼び出す
+    result = update_client.check_for_updates_once()
+    
+    status = result.get("status")
+    message = result.get("message")
+    
+    if status == "found":
+        messagebox.showinfo("アップデート通知", message)
+    elif status == "not_found":
+        messagebox.showinfo("アップデート通知", message)
+    elif status == "error":
+        messagebox.showerror("エラー", message)
 
 def create_gui():
     root = tk.Tk(className="GeneralManagementTool")
-    root.wm_class("generalmanagementtool","GeneralManagementTool")
     root.title("General Management Tool")
     root.geometry("1600x900")
     
-    # Path.extists()は誤りなので修正
     if Path(ICON_PATH).exists():
-        # PhotoTmage()は誤りなので修正
         root.iconphoto(True, tk.PhotoImage(file=ICON_PATH))
 
-    # ===== ヘッダーフレーム（通知ベルをここに入れる） =====
     header_frame = tk.Frame(root, height=50)
     header_frame.pack(fill="x", side="top")
 
-    # 通知ベル（右寄せ）
     bell_icon = tk.Button(header_frame, text="🔔", command=notify_update, bd=0, font=("Arial", 16))
     bell_icon.pack(side="right", padx=20, pady=5)
 
     notebook = ttk.Notebook(root)
     notebook.pack(fill="both", expand=True)
 
-    # タブ追加（順番はお好みで）
     resource_tab = resource_monitor.create_frame(notebook)
     network_status_tab = network_status.create_frame(notebook)
     endpoint_tab = endpoint_log.create_frame(notebook)
