@@ -9,8 +9,10 @@ connected_clients = set()
 async def notify_clients(message):
     """接続中の全クライアントにメッセージを送信します。"""
     if connected_clients:
-        # 非同期で全てのクライアントにメッセージを送信
-        await asyncio.wait([client.send(message) for client in connected_clients])
+        # 非同期で全てのクライアントにメッセージを送信するためのタスクを作成
+        tasks = [asyncio.create_task(client.send(message)) for client in connected_clients]
+        # 全てのタスクが完了するのを待機
+        await asyncio.wait(tasks)
 
 async def handler(websocket, path):
     """新しいクライアントが接続したときに実行されます。"""
