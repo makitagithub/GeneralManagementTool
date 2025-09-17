@@ -1,44 +1,53 @@
 import asyncio
 import websockets
 import json
+import time
 
 # 接続中のクライアントを管理するためのセット
-CONNECTED_CLIENTS = set()
+connected_clients = set()
 
 async def notify_clients(message):
     """接続中の全クライアントにメッセージを送信します。"""
-    # 接続が切れたクライアントは除外する
-    if CONNECTED_CLIENTS:
-        await asyncio.wait([client.send(message) for client in CONNECTED_CLIENTS])
+    if connected_clients:
+        # 非同期で全てのクライアントにメッセージを送信
+        await asyncio.wait([client.send(message) for client in connected_clients])
 
-async def register(websocket):
-    """クライアントが接続したときに実行されます。"""
-    CONNECTED_CLIENTS.add(websocket)
+async def handler(websocket, path):
+    """新しいクライアントが接続したときに実行されます。"""
+    print(f"新しいクライアントが接続しました。Path: {path}")
+    # 新しいクライアントをセットに追加
+    connected_clients.add(websocket)
     try:
-        # クライアントが切断するまで待機
+        # クライアントからのメッセージを処理（ここでは何もしない）
         await websocket.wait_closed()
     finally:
-        # クライアントが切断したらリストから削除
-        CONNECTED_CLIENTS.remove(websocket)
+        # クライアントが切断したらセットから削除
+        print("クライアントが切断しました。")
+        connected_clients.remove(websocket)
 
-async def server_main():
-    """WebSocketサーバーを起動します。"""
-    async with websockets.serve(register, "localhost", 8765):
-        print("WebSocketサーバーを起動しました。ポート8765で待機中...")
+async def main():
+    """WebSocketサーバーを起動し、通知ループを開始します。"""
+    # WebSocketサーバーをlocalhostの8765ポートで起動
+    server = await websockets.serve(handler, "localhost", 8765)
+    print("WebSocketサーバーを起動しました。ポート8765で待機中...")
+
+    # 通知を送信するメインループ
+    notification_count = 0
+    while True:
+        # 5秒ごとに通知を送信するシミュレーション
+        await asyncio.sleep(5)
+        notification_count += 1
         
-        # 通知を送るためのシミュレーションループ
-        count = 0
-        while True:
-            # 5秒ごとに通知を送信
-            await asyncio.sleep(5)
-            count += 1
-            notification_message = {
-                "type": "notification",
-                "title": "新しい通知",
-                "body": f"これはサーバーからのテスト通知です。（通知番号：{count}）"
-            }
-            print(f"クライアントに通知を送信: {notification_message['body']}")
-            await notify_clients(json.dumps(notification_message))
+        # JSON形式の通知メッセージを作成
+        message = {
+            "type": "notification",
+            "title": "新しいタスク",
+            "body": f"タスクAが割り当てられました。（通知番号：{notification_count}）"
+        }
+        
+        # 接続中のクライアントにメッセージを送信
+        await notify_clients(json.dumps(message))
+        print(f"通知を送信しました: {message['body']}")
 
 if __name__ == "__main__":
-    asyncio.run(server_main())
+    asyncio.run(main())

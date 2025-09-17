@@ -12,14 +12,15 @@ def run_websocket_client(window):
     async def connect():
         uri = "ws://localhost:8765"
         try:
+            # WebSocketサーバーに接続
             async with websockets.connect(uri) as websocket:
                 print("サーバーに接続しました。通知を待機中...")
                 window.write_event_value(MESSAGE_KEY, "サーバーに接続しました。通知を待機中...")
                 
+                # サーバーからのメッセージを待機
                 async for message_str in websocket:
                     message_data = json.loads(message_str)
                     print(f"サーバーからメッセージを受信: {message_data}")
-                    # GUIのイベントループにメッセージを送信
                     window.write_event_value(MESSAGE_KEY, message_data)
 
         except ConnectionRefusedError:
@@ -52,7 +53,7 @@ thread.start()
 
 # GUIのイベントループ
 while True:
-    event, values = window.read()
+    event, values = window.read(timeout=100)
     if event == sg.WIN_CLOSED or event == "終了":
         break
     
@@ -72,6 +73,6 @@ while True:
             sg.popup_error(error_body, title="エラー")
             window['-OUTPUT-'].print(f"エラー: {error_body}")
             window['-STATUS-'].update("接続エラーが発生しました。")
-            break # エラー発生で終了
+            break
 
 window.close()
