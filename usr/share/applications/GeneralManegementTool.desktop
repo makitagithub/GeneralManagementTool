@@ -1,9 +1,0 @@
-[Desktop Entry]
-Version=1.0
-Name=General Management Tool
-Comment=v 1.1.0
-Exec=python3 /usr/local/bin/GeneralManagementTool.py
-Icon=utilities-terminal
-Terminal=false
-Type=Application
-Categories=Utility;

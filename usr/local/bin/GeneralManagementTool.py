@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+from pathlib import Path
 import tkinter as tk
 from tkinter import ttk, messagebox
 import resource_monitor   # ← 追加
@@ -7,14 +8,18 @@ import command_log
 import endpoint_log
 import network_status
 import setting
+ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
 
 def notify_update():
     messagebox.showinfo("アップデート通知", "新しいアップデートがあります！")
 
 def create_gui():
-    root = tk.Tk()
+    root = tk.Tk(className="GeneralManagementTool")
+    root.wm_class("generalmanagementtool","GeneralManagementTool")
     root.title("General Management Tool")
     root.geometry("1600x900")
+    if Path(ICON_PATH).extists():
+        root.iconphoto(True, tk.PhotoTmage(file=ICON_PATH))
 
     # ===== ヘッダーフレーム（通知ベルをここに入れる） =====
     header_frame = tk.Frame(root, height=50)
