@@ -38,7 +38,7 @@ def create_gui():
     header_frame = tk.Frame(root, height=50)
     header_frame.pack(fill="x", side="top")
 
-    bell_icon = tk.Button(header_frame, text="🔔", command=notify_update, bd=0, font=("Arial", 16))
+    bell_icon = tk.Button(header_frame, text="お知らせ確認", command=notify_update, bd=0, font=("Arial", 16))
     bell_icon.pack(side="right", padx=20, pady=5)
 
     notebook = ttk.Notebook(root)
