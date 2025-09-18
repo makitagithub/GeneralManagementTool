@@ -3,13 +3,19 @@ import json
 
 def check_for_updates_once():
     """一度だけアップデートを確認し、JSON形式の通知メッセージを読み込む"""
-    update_server_url = "http://203.0.113.5/update"
-    notification_url = "http://203.0.113.5/update/notification.json"
+    # update_server_url = "http://203.0.113.5/update"
+    # notification_url = "http://203.0.113.5/update/notification.json"
+    update_server_url = "http://10.0.2.15/update"
+    notification_url = "http://10.0.2.15/update/notification.json"
 
     try:
         # 1. アップデート情報を取得
         update_response = requests.get(update_server_url, timeout=5)
         update_response.raise_for_status()  # 4xx/5xxエラーをキャッチ
+        
+        # 応答内容をデバッグ用に表示
+        print(f"Update server response: {update_response.text}")
+
         update_data = update_response.json()
     except requests.exceptions.RequestException as e:
         # アップデートサーバーへの接続・通信エラー
@@ -22,6 +28,10 @@ def check_for_updates_once():
         # 2. 通知メッセージを取得
         notification_response = requests.get(notification_url, timeout=5)
         notification_response.raise_for_status() # 4xx/5xxエラーをキャッチ
+        
+        # 応答内容をデバッグ用に表示
+        print(f"Notification server response: {notification_response.text}")
+        
         notification_data = notification_response.json()
     except requests.exceptions.RequestException as e:
         # 通知サーバーへの接続・通信エラー
@@ -30,7 +40,7 @@ def check_for_updates_once():
         # 通知メッセージのJSON解析エラー
         return {"status": "error", "message": f"通知メッセージの解析に失敗しました。サーバーの応答が不正です: {e}"}
 
-    # 正常な処理
+    # 正常な処理（ここから以下は前回と同じです）
     notification_title = notification_data.get("title", "")
     notification_message = notification_data.get("message", "通知メッセージはありません。")
 
