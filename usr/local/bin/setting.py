@@ -11,7 +11,7 @@ from client import get_application_version
 def update_application():
     """設定画面から呼び出されるアップデート関数"""
     # ここにダウンロードする特定の.debファイルのURLを指定
-    download_url = "http://10.0.2.15/update/GeneralManagementTool-v2.1.0.deb"
+    download_url = "http://10.0.2.15/update/GeneralManagementTool-v1.5.0.deb"
 
     try:
         # ダウンロード

@@ -10,7 +10,7 @@ import network_status
 import setting
 
 # アプリケーションのバージョン情報
-APPLICATION_VERSION = "1.3.0"
+APPLICATION_VERSION = "1.4.0"
 
 def get_application_version():
     """現在のアプリケーションのバージョンを取得する"""
