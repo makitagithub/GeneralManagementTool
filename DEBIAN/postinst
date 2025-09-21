@@ -4,6 +4,8 @@ case "$1" in
     configure)
         # デスクトップエントリのデータベースを更新
         update-desktop-database
+        # アイコンキャッシュを更新
+        gtk-update-icon-cache -f /usr/share/icons/hicolor/
     ;;
 esac
 
