@@ -1,26 +1,18 @@
 import requests
 import json
-import subprocess
-import os
-import resource_monitor
-import command_log
-import endpoint_log
-import network_status
-import setting
 import tkinter as tk
 from tkinter import ttk, messagebox
 from pathlib import Path
 
 # アプリケーションのバージョン情報
-# このバージョン番号は、.debパッケージのcontrolファイルと一致させる必要があります
 APPLICATION_VERSION = "1.0.0"
 
 def get_application_version():
     """現在のアプリケーションのバージョンを取得する"""
     return APPLICATION_VERSION
 
-def check_for_updates():
-    """通知を確認し、アップデート情報を読み込む"""
+def get_notification_message():
+    """通知メッセージを読み込む"""
     notification_url = "http://10.0.2.15/update/notification.json"
 
     try:
@@ -34,31 +26,20 @@ def check_for_updates():
 
     notification_title = notification_data.get("title", "")
     notification_message = notification_data.get("message", "通知メッセージはありません。")
-
-    if notification_data.get("has_update"):
-        version = notification_data.get("version")
-        download_url = notification_data.get("download_url")
-        
-        # 現在のバージョンと比較
-        if version > get_application_version():
-            return {"status": "found", "message": f"新しいバージョンが見つかりました: {version}", "download_url": download_url}
-        else:
-            return {"status": "not_found", "message": "新しいアップデートはありません。"}
-    else:
-        return {"status": "not_found", "message": "新しいアップデートはありません。"}
+    
+    message = f"[{notification_title}]\n{notification_message}"
+    return {"status": "success", "message": message}
 
 ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
 
 def notify_update():
-    """ベルマークボタンを押したときにアップデートを確認し、通知を表示する"""
-    result = check_for_updates()
+    """ベルマークボタンを押したときに通知を表示する"""
+    result = get_notification_message()
     status = result.get("status")
     message = result.get("message")
     
-    if status == "found":
-        messagebox.showinfo("アップデート通知", f"{message}\n\n設定画面から更新できます。")
-    elif status == "not_found":
-        messagebox.showinfo("アップデート通知", message)
+    if status == "success":
+        messagebox.showinfo("お知らせ", message)
     elif status == "error":
         messagebox.showerror("エラー", message)
 
@@ -79,17 +60,18 @@ def create_gui():
     notebook = ttk.Notebook(root)
     notebook.pack(fill="both", expand=True)
 
-    resource_tab = resource_monitor.create_frame(notebook)
-    network_status_tab = network_status.create_frame(notebook)
-    endpoint_tab = endpoint_log.create_frame(notebook)
-    log_tab = command_log.create_frame(notebook)
-    settings_tab = setting.create_frame(notebook)
+    # 各タブのフレームをダミーで作成
+    dummy_tab1 = tk.Frame(notebook)
+    dummy_tab2 = tk.Frame(notebook)
+    dummy_tab3 = tk.Frame(notebook)
+    dummy_tab4 = tk.Frame(notebook)
+    dummy_tab5 = tk.Frame(notebook)
 
-    notebook.add(resource_tab, text="🏠 resource monitor")
-    notebook.add(network_status_tab, text="🌐 network status")
-    notebook.add(endpoint_tab, text="🖧 endpoint management")
-    notebook.add(log_tab, text="👨‍💼 log management")
-    notebook.add(settings_tab, text="⚙️ settings")
+    notebook.add(dummy_tab1, text="🏠 resource monitor")
+    notebook.add(dummy_tab2, text="🌐 network status")
+    notebook.add(dummy_tab3, text="🖧 endpoint management")
+    notebook.add(dummy_tab4, text="👨‍💼 log management")
+    notebook.add(dummy_tab5, text="⚙️ settings")
 
     root.mainloop()
 
