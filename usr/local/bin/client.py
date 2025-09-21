@@ -3,6 +3,11 @@ import json
 import tkinter as tk
 from tkinter import ttk, messagebox
 from pathlib import Path
+import resource_monitor
+import command_log
+import endpoint_log
+import network_status
+import setting
 
 # アプリケーションのバージョン情報
 APPLICATION_VERSION = "1.0.0"
@@ -13,7 +18,7 @@ def get_application_version():
 
 def get_notification_message():
     """通知メッセージを読み込む"""
-    # 意図的にnotification.jsonを直接指定
+    # notification.jsonを直接指定
     notification_url = "http://10.0.2.15/update/notification.json"
 
     try:
@@ -31,9 +36,6 @@ def get_notification_message():
     # シンプルにタイトルとメッセージを結合して返す
     message = f"[{notification_title}]\n{notification_message}"
     return {"status": "success", "message": message}
-
-# GUIの修正
-# このコードでは、他のモジュールは直接使用しないため、importを削除しています。
 
 ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
 
@@ -66,18 +68,17 @@ def create_gui():
     notebook = ttk.Notebook(root)
     notebook.pack(fill="both", expand=True)
 
-    # 各タブのフレームをダミーで作成
-    dummy_tab1 = tk.Frame(notebook)
-    dummy_tab2 = tk.Frame(notebook)
-    dummy_tab3 = tk.Frame(notebook)
-    dummy_tab4 = tk.Frame(notebook)
-    dummy_tab5 = tk.Frame(notebook)
+    resource_tab = resource_monitor.create_frame(notebook)
+    network_status_tab = network_status.create_frame(notebook)
+    endpoint_tab = endpoint_log.create_frame(notebook)
+    log_tab = command_log.create_frame(notebook)
+    settings_tab = setting.create_frame(notebook)
 
-    notebook.add(dummy_tab1, text="🏠 resource monitor")
-    notebook.add(dummy_tab2, text="🌐 network status")
-    notebook.add(dummy_tab3, text="🖧 endpoint management")
-    notebook.add(dummy_tab4, text="👨‍💼 log management")
-    notebook.add(dummy_tab5, text="⚙️ settings")
+    notebook.add(resource_tab, text="🏠 resource monitor")
+    notebook.add(network_status_tab, text="🌐 network status")
+    notebook.add(endpoint_tab, text="🖧 endpoint management")
+    notebook.add(log_tab, text="👨‍💼 log management")
+    notebook.add(settings_tab, text="⚙️ settings")
 
     root.mainloop()
 
