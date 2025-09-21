@@ -8,17 +8,6 @@ import os
 # バージョン情報とアップデート確認機能をインポート
 from client import get_application_version
 
-def create_frame(parent):
-    frame = tk.Frame(parent, width=1600, height=900)
-    frame.pack_propagate(False)
-
-    # タイトル（画面中央）
-    title = tk.Label(frame, text="Settings", font=("Arial", 18, "bold"))
-    title.pack(pady=10)
-
-    version_label = tk.Label(frame, text="Version: 1.0.0", font=("Arial", 16))
-    version_label.pack(pady=30)
-
 def update_application():
     """設定画面から呼び出されるアップデート関数"""
     # ここにダウンロードする特定の.debファイルのURLを指定
@@ -52,56 +41,66 @@ def update_application():
 def create_frame(notebook):
     frame = tk.Frame(notebook)
     
+    # ソフトウェア更新セクション
+    update_frame = tk.LabelFrame(frame, text="ソフトウェア更新", font=("Arial", 14, "bold"))
+    update_frame.pack(padx=20, pady=10, fill="x")
+
     # バージョン情報
-    version_label = tk.Label(frame, text=f"バージョン: {get_application_version()}")
-    version_label.pack(pady=20)
+    version_label = tk.Label(update_frame, text=f"バージョン: {get_application_version()}", font=("Arial", 12))
+    version_label.pack(pady=5, padx=10, anchor="w")
 
     # ソフトウェア更新ボタン
-    update_button = ttk.Button(frame, text="ソフトウェア更新", command=update_application)
+    update_button = ttk.Button(update_frame, text="ソフトウェア更新", command=update_application)
     update_button.pack(pady=10)
 
-        # テーマ選択
-    tk.Label(display_frame, text="Theme:", font=("Arial", 12)).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+    # --- その他の設定項目 ---
+    
+    # 表示設定
+    display_frame = tk.LabelFrame(frame, text="表示設定", font=("Arial", 14, "bold"))
+    display_frame.pack(padx=20, pady=10, fill="x")
+    
+    # テーマ選択
+    tk.Label(display_frame, text="テーマ:", font=("Arial", 12)).grid(row=0, column=0, sticky="w", padx=10, pady=5)
     theme_var = tk.StringVar(value="Light")
     theme_menu = ttk.Combobox(display_frame, textvariable=theme_var, values=["Light", "Dark"], state="readonly")
     theme_menu.grid(row=0, column=1, padx=10, pady=5)
 
     # 言語選択
-    tk.Label(display_frame, text="Display Language:", font=("Arial", 12)).grid(row=1, column=0, sticky="w", padx=10, pady=5)
+    tk.Label(display_frame, text="表示言語:", font=("Arial", 12)).grid(row=1, column=0, sticky="w", padx=10, pady=5)
     language_var = tk.StringVar(value="日本語")
     language_menu = ttk.Combobox(display_frame, textvariable=language_var, values=["日本語", "English"], state="readonly")
     language_menu.grid(row=1, column=1, padx=10, pady=5)
 
     # 通知のオンオフ
     notify_var = tk.BooleanVar(value=True)
-    notify_check = tk.Checkbutton(display_frame, text="Enable Notifications", variable=notify_var, font=("Arial", 12))
+    notify_check = tk.Checkbutton(display_frame, text="通知を有効にする", variable=notify_var, font=("Arial", 12))
     notify_check.grid(row=2, column=0, columnspan=2, sticky="w", padx=10, pady=5)
 
-    # --- Security Settings ---
-    security_frame = tk.LabelFrame(frame, text="Security Settings", font=("Arial", 14, "bold"))
+    # セキュリティ設定
+    security_frame = tk.LabelFrame(frame, text="セキュリティ設定", font=("Arial", 14, "bold"))
     security_frame.pack(padx=20, pady=10, fill="x")
 
     # パスワード変更
-    tk.Label(security_frame, text="New Password:", font=("Arial", 12)).grid(row=0, column=0, sticky="w", padx=10, pady=5)
+    tk.Label(security_frame, text="新しいパスワード:", font=("Arial", 12)).grid(row=0, column=0, sticky="w", padx=10, pady=5)
     new_pw = tk.Entry(security_frame, show="*")
     new_pw.grid(row=0, column=1, padx=10, pady=5)
 
-    tk.Label(security_frame, text="Confirm Password:", font=("Arial", 12)).grid(row=1, column=0, sticky="w", padx=10, pady=5)
+    tk.Label(security_frame, text="パスワード確認:", font=("Arial", 12)).grid(row=1, column=0, sticky="w", padx=10, pady=5)
     confirm_pw = tk.Entry(security_frame, show="*")
     confirm_pw.grid(row=1, column=1, padx=10, pady=5)
 
     def change_password():
         if new_pw.get() != confirm_pw.get():
-            messagebox.showerror("Error", "Passwords do not match")
+            messagebox.showerror("エラー", "パスワードが一致しません")
         else:
-            messagebox.showinfo("Success", "Password has been updated (mock)")
+            messagebox.showinfo("成功", "パスワードが更新されました (これはモックです)")
 
-    pw_button = tk.Button(security_frame, text="Change Password", command=change_password)
+    pw_button = tk.Button(security_frame, text="パスワード変更", command=change_password)
     pw_button.grid(row=2, column=0, columnspan=2, pady=10)
 
-    # Two-Factor Authentication (mock)
+    # 二段階認証 (モック)
     mfa_var = tk.BooleanVar()
-    mfa_check = tk.Checkbutton(security_frame, text="Enable Two-Factor Authentication", variable=mfa_var, font=("Arial", 12))
+    mfa_check = tk.Checkbutton(security_frame, text="二段階認証を有効にする", variable=mfa_var, font=("Arial", 12))
     mfa_check.grid(row=3, column=0, columnspan=2, sticky="w", padx=10, pady=5)
 
     return frame
