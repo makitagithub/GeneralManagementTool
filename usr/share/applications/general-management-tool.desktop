@@ -1,4 +1,4 @@
-[DesktopEntry]
+[Desktop Entry]
 Name=General Management Tool
 Comment=A tool for system monitoring and Management
 Exec=/usr/local/bin/GeneralManagementTool.py
