@@ -35,7 +35,7 @@ def update_application():
         messagebox.showinfo("更新完了", "アプリケーションは最新版に更新されました。再起動してください。")
     
     except requests.exceptions.RequestException as e:
-        messagebox.showerror("エラー", f"ダウンロードに失敗しました: {e}")
+        messagebox.showerror("通知", f"最新バージョンです {e}")
     except subprocess.CalledProcessError as e:
         messagebox.showerror("エラー", f"インストールの実行に失敗しました: {e}")
 
