@@ -11,7 +11,7 @@ from client import get_application_version
 def update_application():
     """設定画面から呼び出されるアップデート関数"""
     # ここにダウンロードする特定の.debファイルのURLを指定
-    download_url = "http://10.0.2.15/update/GeneralManagementTool-v1.5.0.deb"
+    download_url = "http://10.0.2.15/update/GeneralManagementTool-v1.6.0.deb"
 
     try:
         # ダウンロード
@@ -26,9 +26,10 @@ def update_application():
             for chunk in res.iter_content(chunk_size=8192):
                 f.write(chunk)
         
-        # インストールコマンドを実行 (管理者権限が必要)
-        messagebox.showinfo("ソフトウェア更新", "アップデートをインストール中...パスワードが求められます。")
-        install_command = ["sudo", "dpkg", "-i", temp_file_path]
+        # インストールコマンドをpkexecに変更 (パスワード入力ダイアログが表示される)
+        install_command = ["pkexec", "dpkg", "-i", temp_file_path]
+        
+        # subprocess.run を使用してコマンドを実行
         subprocess.run(install_command, check=True)
 
         messagebox.showinfo("更新完了", "アプリケーションは最新版に更新されました。再起動してください。")
