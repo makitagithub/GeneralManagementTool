@@ -8,6 +8,17 @@ import os
 # バージョン情報とアップデート確認機能をインポート
 from client import get_application_version
 
+def create_frame(parent):
+    frame = tk.Frame(parent, width=1600, height=900)
+    frame.pack_propagate(False)
+
+    # タイトル（画面中央）
+    title = tk.Label(frame, text="Settings", font=("Arial", 18, "bold"))
+    title.pack(pady=10)
+
+    version_label = tk.Label(frame, text="Version: 1.0.0", font=("Arial", 16))
+    version_label.pack(pady=30)
+
 def update_application():
     """設定画面から呼び出されるアップデート関数"""
     # ここにダウンロードする特定の.debファイルのURLを指定
