@@ -1,2 +1,10 @@
-#!/bin/bash
-echo "GeneralManagementTool v1.0.0 installed successfully!"
+#!/bin/sh -e
+
+case "$1" in
+    configure)
+        # デスクトップエントリのデータベースを更新
+        update-desktop-database
+    ;;
+esac
+
+exit 0
