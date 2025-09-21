@@ -15,13 +15,11 @@ from pathlib import Path
 # このバージョン番号は、.debパッケージのcontrolファイルと一致させる必要があります
 APPLICATION_VERSION = "1.0.0"
 
-# --- アップデート機能の追加 ---
-
 def get_application_version():
     """現在のアプリケーションのバージョンを取得する"""
     return APPLICATION_VERSION
 
-def check_for_updates_once():
+def check_for_updates():
     """通知を確認し、アップデート情報を読み込む"""
     notification_url = "http://10.0.2.15/update/notification.json"
 
@@ -40,66 +38,25 @@ def check_for_updates_once():
     if notification_data.get("has_update"):
         version = notification_data.get("version")
         download_url = notification_data.get("download_url")
-        message = f"[{notification_title}]\n{notification_message}\n\n新しいバージョンが見つかりました: {version}\nダウンロード: {download_url}"
         
         # 現在のバージョンと比較
         if version > get_application_version():
-            return {"status": "found", "message": message, "download_url": download_url}
+            return {"status": "found", "message": f"新しいバージョンが見つかりました: {version}", "download_url": download_url}
         else:
             return {"status": "not_found", "message": "新しいアップデートはありません。"}
     else:
-        message = f"[{notification_title}]\n{notification_message}\n\n新しいアップデートはありません。"
-        return {"status": "not_found", "message": message, "download_url": None}
-
-
-def update_application_auto(download_url):
-    """アプリケーションを自動でアップデートする"""
-    if not download_url:
-        return {"status": "error", "message": "ダウンロードURLが指定されていません。"}
-    
-    try:
-        # ダウンロード
-        messagebox.showinfo("アップデート", "アップデートファイルをダウンロード中...")
-        response = requests.get(download_url, stream=True)
-        response.raise_for_status()
-
-        deb_filename = os.path.basename(download_url)
-        temp_file_path = f"/tmp/{deb_filename}"
-
-        with open(temp_file_path, "wb") as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-        
-        # インストールコマンドを実行 (管理者権限が必要)
-        messagebox.showinfo("アップデート", "アップデートをインストール中...パスワードが求められます。")
-        install_command = ["sudo", "dpkg", "-i", temp_file_path]
-        subprocess.run(install_command, check=True)
-
-        messagebox.showinfo("アップデート完了", "アプリケーションは最新版にアップデートされました。再起動してください。")
-        return {"status": "success", "message": "アップデートが完了しました。"}
-
-    except requests.exceptions.RequestException as e:
-        messagebox.showerror("エラー", f"ダウンロードに失敗しました: {e}")
-        return {"status": "error", "message": f"ダウンロードに失敗しました: {e}"}
-    except subprocess.CalledProcessError as e:
-        messagebox.showerror("エラー", f"インストールの実行に失敗しました: {e}")
-        return {"status": "error", "message": f"インストールの実行に失敗しました: {e}"}
-
-# --- GUIの修正 ---
+        return {"status": "not_found", "message": "新しいアップデートはありません。"}
 
 ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
 
 def notify_update():
     """ベルマークボタンを押したときにアップデートを確認し、通知を表示する"""
-    result = check_for_updates_once()
+    result = check_for_updates()
     status = result.get("status")
     message = result.get("message")
-    download_url = result.get("download_url")
     
     if status == "found":
-        response = messagebox.askyesno("アップデート通知", f"{message}\n\n今すぐアップデートしますか？")
-        if response:
-            update_application_auto(download_url)
+        messagebox.showinfo("アップデート通知", f"{message}\n\n設定画面から更新できます。")
     elif status == "not_found":
         messagebox.showinfo("アップデート通知", message)
     elif status == "error":
