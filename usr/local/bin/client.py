@@ -13,6 +13,7 @@ def get_application_version():
 
 def get_notification_message():
     """通知メッセージを読み込む"""
+    # 意図的にnotification.jsonを直接指定
     notification_url = "http://10.0.2.15/update/notification.json"
 
     try:
@@ -27,8 +28,12 @@ def get_notification_message():
     notification_title = notification_data.get("title", "")
     notification_message = notification_data.get("message", "通知メッセージはありません。")
     
+    # シンプルにタイトルとメッセージを結合して返す
     message = f"[{notification_title}]\n{notification_message}"
     return {"status": "success", "message": message}
+
+# GUIの修正
+# このコードでは、他のモジュールは直接使用しないため、importを削除しています。
 
 ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
 
@@ -48,6 +53,7 @@ def create_gui():
     root.title("General Management Tool")
     root.geometry("1600x900")
     
+    # アイコンパスが存在する場合のみ設定
     if Path(ICON_PATH).exists():
         root.iconphoto(True, tk.PhotoImage(file=ICON_PATH))
 
