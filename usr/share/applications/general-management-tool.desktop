@@ -4,5 +4,5 @@ Comment=A tool for system monitoring and Management
 Exec=/usr/local/bin/GeneralManagementTool.py
 Icon=/usr/share/icons/hicolor/scalable/apps/icon_picture.png
 Terminal=false
-Tyepe=Application
+Type=Application
 Categories=Utility;System;
