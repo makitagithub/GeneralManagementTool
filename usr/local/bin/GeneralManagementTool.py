@@ -8,22 +8,23 @@ import command_log
 import endpoint_log
 import network_status
 import setting
-import client as update_client # client.pyをインポート
+# import client as update_client # client.pyをインポート
+
+# clientモジュールから直接必要な関数をインポート
+from client import get_notification_message
 
 ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
 
 def notify_update():
-    """ベルマークボタンを押したときにアップデートを確認し、通知を表示する"""
-    # client.pyから関数を呼び出す
-    result = update_client.check_for_updates_once()
+    """ベルマークボタンを押したときに通知を表示する"""
+    # client.pyからget_notification_message関数を呼び出す
+    result = get_notification_message()
     
     status = result.get("status")
     message = result.get("message")
     
-    if status == "found":
-        messagebox.showinfo("アップデート通知", message)
-    elif status == "not_found":
-        messagebox.showinfo("アップデート通知", message)
+    if status == "success":
+        messagebox.showinfo("お知らせ", message)
     elif status == "error":
         messagebox.showerror("エラー", message)
 
