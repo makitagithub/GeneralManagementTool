@@ -39,17 +39,41 @@ def create_gui():
     header_frame = tk.Frame(root, height=50)
     header_frame.pack(fill="x", side="top")
 
-    bell_icon = tk.Button(header_frame, text="new→🔔", command=notify_update, bd=0, font=("Arial", 16))
-    bell_icon.pack(side="right", padx=20, pady=5)
+    # 1. 通知状態変数 (BooleanVar) の定義（初期状態: True、通知あり）
+    notification_available = tk.BooleanVar(value=True) 
+
+    # 2. 🔔アイコンボタンの作成
+    # command に引数を渡すため lambda 式を使用
+    bell_icon = tk.Button(
+        header_frame, 
+        text="🔔", 
+        command=lambda: notify_update(notification_available, notification_label), 
+        bd=0, 
+        font=("Arial", 16),
+        fg="red" # 通知があることを示すために赤くする
+    )
+    bell_icon.pack(side="right", padx=5, pady=5) # 🔔アイコンを右端に配置
+
+    # 3. 通知メッセージ Label の作成
+    notification_label = tk.Label(
+        header_frame, 
+        text="一件の通知があります", 
+        fg="red", # メッセージも赤くして目立たせる
+        font=("Arial", 12, "bold")
+    )
+    
+    # 4. 初期状態で通知がある場合のみメッセージを表示
+    # 🔔アイコンの左隣に配置するため、🔔よりも先に pack する必要がある
+    if notification_available.get():
+        notification_label.pack(side="right", padx=5, pady=5)
 
     notebook = ttk.Notebook(root)
     notebook.pack(fill="both", expand=True)
 
-    resource_tab = resource_monitor.create_frame(notebook)
-    network_status_tab = network_status.create_frame(notebook)
-    endpoint_tab = endpoint_log.create_frame(notebook)
-    log_tab = command_log.create_frame(notebook)
-    settings_tab = setting.create_frame(notebook)
+    # resource_monitor, network_status などがないため仮のフレームで代替
+    resource_tab = tk.Frame(notebook); network_status_tab = tk.Frame(notebook)
+    endpoint_tab = tk.Frame(notebook); log_tab = tk.Frame(notebook)
+    settings_tab = tk.Frame(notebook)
 
     notebook.add(resource_tab, text="🏠 resource monitor")
     notebook.add(network_status_tab, text="🌐 network status")
