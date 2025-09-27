@@ -15,6 +15,8 @@ from client import get_notification_message
 
 ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
 
+notification_available = None 
+
 def notify_update():
     """ベルマークボタンを押したときに通知を表示する"""
     # client.pyからget_notification_message関数を呼び出す
@@ -39,45 +41,17 @@ def create_gui():
     header_frame = tk.Frame(root, height=50)
     header_frame.pack(fill="x", side="top")
 
-    # --- 🔔アイコンと通知メッセージの変更点 ---
-    
-    # 1. 通知状態を管理する変数（初期値: True = 通知あり）
-    notification_available = tk.BooleanVar(value=True) 
+    global notification_available
+    notification_available = tk.BooleanVar(value=True)
+    initial_text = "重要なお知らせが来ています🔔" if notification_available.get() else "🔔"
+    bell_text = tk.StringVar(value=initial_text) 
 
-    # 2. 通知メッセージ Label の作成
-    notification_label = tk.Label(
-        header_frame, 
-        text="一件の通知があります", 
-        fg="red", # 目立たせる
-        font=("Arial", 12, "bold")
-    )
+    bell_icon = tk.Button(header_frame, text=bell_text, command=notify_update, bd=0, font=("Arial", 16), fg="red" if notification_available.get() else "black")
+    bell_icon.pack(side="right", padx=20, pady=5)
 
-    # 3. 🔔アイコンボタンの作成
-    # textをシンプルにし、通知ありを示す色を設定
-    bell_icon = tk.Button(
-        header_frame, 
-        text="🚨🔔", # 通知ありを示すアイコンに変更 (例: 🚨🔔)
-        # lambdaを使ってnotify_updateに関数とラベルとボタン自身を渡す
-        command=lambda: notify_update(notification_available, notification_label, bell_icon), 
-        bd=0, 
-        font=("Arial", 16),
-        fg="red" # 通知があることを示すために赤くする
-    )
-    
-    # 4. ラベルとボタンを配置 (packの順序が重要: ラベル → ボタンで左から右に並ぶ)
-    # 初期状態で通知がある場合のみメッセージを表示
-    if notification_available.get():
-        # bell_iconよりも先にpackすることで、左隣に配置される
-        notification_label.pack(side="right", padx=5, pady=5) 
-        
-    bell_icon.pack(side="right", padx=15, pady=5) # 🔔アイコンを右端に配置
-
-    # ----------------------------------------
-    
     notebook = ttk.Notebook(root)
     notebook.pack(fill="both", expand=True)
 
-    # ... (タブの作成と追加は変更なし) ...
     resource_tab = resource_monitor.create_frame(notebook)
     network_status_tab = network_status.create_frame(notebook)
     endpoint_tab = endpoint_log.create_frame(notebook)

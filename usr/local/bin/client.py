@@ -50,6 +50,10 @@ def notify_update():
     elif status == "error":
         messagebox.showerror("エラー", message)
 
+    global notification_available
+    if notification_available is not None:
+         notification_available.set(False)
+
 def create_gui():
     root = tk.Tk(className="GeneralManagementTool")
     root.title("General Management Tool")
