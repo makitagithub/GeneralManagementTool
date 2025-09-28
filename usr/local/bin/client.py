@@ -1,13 +1,14 @@
 import requests
 import json
-import tkinter as tk
-from tkinter import ttk, messagebox
-from pathlib import Path
-import resource_monitor
-import command_log
-import endpoint_log
-import network_status
-import setting
+# 以下のGUI関連のimportは不要
+# import tkinter as tk
+# from tkinter import ttk, messagebox
+# from pathlib import Path
+# import resource_monitor
+# import command_log
+# import endpoint_log
+# import network_status
+# import setting
 
 # アプリケーションのバージョン情報
 APPLICATION_VERSION = "1.6.0"
@@ -37,54 +38,5 @@ def get_notification_message():
     message = f"[{notification_title}]\n{notification_message}"
     return {"status": "success", "message": message}
 
-ICON_PATH = "/usr/share/icons/hicolor/scalable/apps/icon_picture.png"
-
-def notify_update():
-    """ベルマークボタンを押したときに通知を表示する"""
-    result = get_notification_message()
-    status = result.get("status")
-    message = result.get("message")
-    
-    if status == "success":
-        messagebox.showinfo("お知らせ", message)
-    elif status == "error":
-        messagebox.showerror("エラー", message)
-
-    global notification_available
-    if notification_available is not None:
-         notification_available.set(False)
-
-def create_gui():
-    root = tk.Tk(className="GeneralManagementTool")
-    root.title("General Management Tool")
-    root.geometry("1600x900")
-    
-    # アイコンパスが存在する場合のみ設定
-    if Path(ICON_PATH).exists():
-        root.iconphoto(True, tk.PhotoImage(file=ICON_PATH))
-
-    header_frame = tk.Frame(root, height=50)
-    header_frame.pack(fill="x", side="top")
-
-    bell_icon = tk.Button(header_frame, text="🔔", command=notify_update, bd=0, font=("Arial", 16))
-    bell_icon.pack(side="right", padx=20, pady=5)
-
-    notebook = ttk.Notebook(root)
-    notebook.pack(fill="both", expand=True)
-
-    resource_tab = resource_monitor.create_frame(notebook)
-    network_status_tab = network_status.create_frame(notebook)
-    endpoint_tab = endpoint_log.create_frame(notebook)
-    log_tab = command_log.create_frame(notebook)
-    settings_tab = setting.create_frame(notebook)
-
-    notebook.add(resource_tab, text="🏠 resource monitor")
-    notebook.add(network_status_tab, text="🌐 network status")
-    notebook.add(endpoint_tab, text="🖧 endpoint management")
-    notebook.add(log_tab, text="👨‍💼 log management")
-    notebook.add(settings_tab, text="⚙️ settings")
-
-    root.mainloop()
-
-if __name__ == "__main__":
-    create_gui()
+# client.pyの残りのGUI関連関数やmainブロックはすべて削除します。
+# GeneralManagementTool.py が get_notification_message のみを使用します。
