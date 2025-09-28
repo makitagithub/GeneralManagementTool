@@ -71,7 +71,7 @@ def create_gui():
     
     # 1. 状態管理変数の初期化
     notification_available = tk.BooleanVar(value=True) # 初期状態: 通知あり
-    initial_text = "重要なお知らせが来ています🔔" if notification_available.get() else "🔔"
+    initial_text = "重要なお知らせ🔔" if notification_available.get() else "🔔"
     bell_text = tk.StringVar(value=initial_text) 
     
     # 2. 🔔アイコンボタンの作成
