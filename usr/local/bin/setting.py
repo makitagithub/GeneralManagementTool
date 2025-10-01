@@ -1,7 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import requests
-import json
 import subprocess
 import os
 
@@ -11,7 +10,7 @@ from client import get_application_version
 def update_application():
     """設定画面から呼び出されるアップデート関数"""
     # ここにダウンロードする特定の.debファイルのURLを指定
-    download_url = "http://10.0.2.15/update/GeneralManagementTool-v2.0.0.deb"
+    download_url = "http://10.10.5.2/update/GeneralManagementTool-v2.0.0.deb"
 
     try:
         # ダウンロード
@@ -27,7 +26,7 @@ def update_application():
                 f.write(chunk)
         
         # インストールコマンドをpkexecに変更 (パスワード入力ダイアログが表示される)
-        install_command = ["pkexec", "dpkg", "-i", temp_file_path]
+        install_command = ["pkexec", "apt", "install", "-y", temp_file_path]
         
         # subprocess.run を使用してコマンドを実行
         subprocess.run(install_command, check=True)

@@ -20,7 +20,7 @@ def get_application_version():
 def get_notification_message():
     """通知メッセージを読み込む"""
     # notification.jsonを直接指定
-    notification_url = "http://10.0.2.15/update/notification.json"
+    notification_url = "http://10.10.5.2/update/notification.json"
 
     try:
         response = requests.get(notification_url, timeout=5)
