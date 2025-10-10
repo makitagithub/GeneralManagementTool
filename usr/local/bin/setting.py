@@ -26,7 +26,7 @@ def update_application():
                 f.write(chunk)
         
         # インストールコマンドをpkexecに変更 (パスワード入力ダイアログが表示される)
-        install_command = ["pkexec", "apt", "install", "-y", temp_file_path]
+        install_command = ["pkexec", "bash", "-c", f"cd /tmp && apt install -y ./{deb_filename}"]
         
         # subprocess.run を使用してコマンドを実行
         subprocess.run(install_command, check=True)
