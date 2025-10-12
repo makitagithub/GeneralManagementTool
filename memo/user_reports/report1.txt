@@ -1,0 +1,1 @@
+ユーザ報告: 一部のVMで GUI が起動時にクラッシュ（Segmentation fault）が発生する。
