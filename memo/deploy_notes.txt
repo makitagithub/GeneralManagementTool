@@ -1,5 +1,0 @@
-デプロイ手順（要約）:
-1) .deb をビルドする
-2) /var/www/html/update/ にアップロードする
-3) notification.txt を更新する
-4) 必要なら Apache を再起動する

@@ -1,1 +1,0 @@
-メモ: dpkg-deb --build で .deb を作成します。DEBIAN/control の Depends を必ず確認してください。

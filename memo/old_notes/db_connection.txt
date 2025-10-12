@@ -1,4 +1,0 @@
-DB_HOST=10.10.5.3
-DB_NAME=gmt_db
-DB_USER=gmt_user
-DB_PASS=<REDACTED>

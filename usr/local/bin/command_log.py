@@ -2,9 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import os
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-LOG_DIR = os.path.join(BASE_DIR, "..", "logs") 
-LOG_DIR = os.path.normpath(LOG_DIR)
+LOG_DIR = "/usr/local/share/general-logs"
 
 def create_frame(parent):
     frame = ttk.Frame(parent)
