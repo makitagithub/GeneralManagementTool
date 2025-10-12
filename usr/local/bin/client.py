@@ -11,7 +11,7 @@ import json
 # import setting
 
 # アプリケーションのバージョン情報
-APPLICATION_VERSION = "1.6.0"
+APPLICATION_VERSION = "1.9.0"
 
 def get_application_version():
     """現在のアプリケーションのバージョンを取得する"""
