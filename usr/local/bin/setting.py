@@ -27,10 +27,18 @@ def update_application():
         
         # インストールコマンドをpkexecに変更 (パスワード入力ダイアログが表示される)
         install_command = [
-            "pkexec", "bash", "-lc",
-            f"apt purge -y general-management-tool-v1.9.0 && "
+        "pkexec", "bash", "-lc",
+        (
+            # general-management-tool 関連のパッケージが存在すれば削除
+            "if dpkg -l | grep -q '^ii  general-management-tool'; then "
+            "    echo 'Removing old version(s)...'; "
+            "    apt purge -y 'general-management-tool*'; "
+            "fi; "
+            # 新バージョンをインストール
             f"apt install -y {temp_file_path}"
-        ]
+    )
+]
+
         
         # subprocess.run を使用してコマンドを実行
         subprocess.run(install_command, check=True)
